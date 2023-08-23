@@ -1,3 +1,5 @@
 mvnw*
 HELP.md
 .DS_STORE
+target/
+.vscode/
