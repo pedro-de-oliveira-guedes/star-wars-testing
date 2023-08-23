@@ -1,5 +1,7 @@
 package com.example.starwarsplanetapi.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -53,5 +55,10 @@ public class Planet{
 
     public void setTerrain(String terrain) {
         this.terrain = terrain;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
     }
 }
