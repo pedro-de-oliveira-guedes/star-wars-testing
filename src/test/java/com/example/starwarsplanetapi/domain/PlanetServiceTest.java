@@ -1,6 +1,8 @@
 package com.example.starwarsplanetapi.domain;
 
 import static com.example.starwarsplanetapi.common.PlanetConstants.PLANET;
+import static com.example.starwarsplanetapi.common.PlanetConstants.PLANETS;
+import static com.example.starwarsplanetapi.common.PlanetConstants.PLANET_QUERY;
 import static com.example.starwarsplanetapi.common.PlanetConstants.INVALID_PLANET;
 import static com.example.starwarsplanetapi.common.PlanetConstants.VALID_ID;
 import static com.example.starwarsplanetapi.common.PlanetConstants.VALID_PLANET;
@@ -17,8 +19,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import com.example.starwarsplanetapi.repositories.PlanetRepository;
@@ -85,5 +90,24 @@ public class PlanetServiceTest {
         Optional<Planet> foundPlanet = planetService.findByName(UNEXISTENT_NAME);
 
         assertThat(foundPlanet).isEmpty();
+    }
+
+    @Test
+    public void listPlanets_WithNoFilters_ReturnsAllPlanets() {
+        when(planetRepository.findAll(PLANET_QUERY)).thenReturn(PLANETS);
+
+        List<Planet> planetList = planetService.list("c", "t");
+
+        assertThat(planetList).isNotEmpty();
+        assertThat(planetList.get(0)).isEqualTo(PLANET);
+    }
+
+    @Test
+    public void listPlanets_WithFiltersThatHaveNoMatch_ReturnsNoPlanets() {
+        when(planetRepository.findAll(any())).thenReturn(Collections.emptyList());
+
+        List<Planet> planetList = planetService.list("c", "t");
+
+        assertThat(planetList).isEmpty();
     }
 }
