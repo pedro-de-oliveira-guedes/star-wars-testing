@@ -5,6 +5,8 @@ import static com.example.starwarsplanetapi.common.PlanetConstants.INVALID_PLANE
 import static com.example.starwarsplanetapi.common.PlanetConstants.VALID_ID;
 import static com.example.starwarsplanetapi.common.PlanetConstants.VALID_PLANET;
 import static com.example.starwarsplanetapi.common.PlanetConstants.INVALID_ID;
+import static com.example.starwarsplanetapi.common.PlanetConstants.EXISTENT_NAME;
+import static com.example.starwarsplanetapi.common.PlanetConstants.UNEXISTENT_NAME;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -61,6 +64,25 @@ public class PlanetServiceTest {
         when(planetRepository.findById(INVALID_ID)).thenReturn(Optional.empty());
 
         Optional<Planet> foundPlanet = planetService.get(INVALID_ID);
+
+        assertThat(foundPlanet).isEmpty();
+    }
+
+    @Test
+    public void getPlanet_ByExistentName_ReturnsPlanet() {
+        when(planetRepository.findByName(EXISTENT_NAME)).thenReturn(VALID_PLANET);
+
+        Optional<Planet> foundPlanet = planetService.findByName(EXISTENT_NAME);
+
+        assertThat(foundPlanet).isNotEmpty();
+        assertEquals(VALID_PLANET, foundPlanet);
+    }
+
+    @Test
+    public void getPlanet_ByUnexistentName_ReturnsEmpty() {
+        when(planetRepository.findByName(UNEXISTENT_NAME)).thenReturn(Optional.empty());
+
+        Optional<Planet> foundPlanet = planetService.findByName(UNEXISTENT_NAME);
 
         assertThat(foundPlanet).isEmpty();
     }
