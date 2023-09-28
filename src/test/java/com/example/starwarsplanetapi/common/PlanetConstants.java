@@ -13,4 +13,7 @@ public class PlanetConstants {
     public static final Optional<Planet> VALID_PLANET = Optional.of(PLANET);
 
     public static final Long INVALID_ID = 2L;
+
+    public static final String EXISTENT_NAME = "Leporidônea";
+    public static final String UNEXISTENT_NAME = "Leoporidônea";
 }
