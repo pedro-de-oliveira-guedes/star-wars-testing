@@ -10,6 +10,7 @@ import static com.example.starwarsplanetapi.common.PlanetConstants.INVALID_ID;
 import static com.example.starwarsplanetapi.common.PlanetConstants.EXISTENT_NAME;
 import static com.example.starwarsplanetapi.common.PlanetConstants.UNEXISTENT_NAME;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,8 +19,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -109,5 +112,17 @@ public class PlanetServiceTest {
         List<Planet> planetList = planetService.list("c", "t");
 
         assertThat(planetList).isEmpty();
+    }
+
+    @Test
+    public void deletePlanet_WithExistentId_DoesNotThrowsError() {
+        assertDoesNotThrow( () -> planetService.deleteById(VALID_ID) );
+    }
+
+    @Test
+    public void deletePlanet_WithNonExistentId_ThrowsError() {
+        doThrow(RuntimeException.class).when(planetRepository).deleteById(INVALID_ID);
+        
+        assertThatThrownBy( () -> planetService.deleteById(INVALID_ID) ).isNotNull();
     }
 }
