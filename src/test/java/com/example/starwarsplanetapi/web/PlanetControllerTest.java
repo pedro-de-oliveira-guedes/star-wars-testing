@@ -4,6 +4,7 @@ import static com.example.starwarsplanetapi.common.PlanetConstants.PLANET;
 import static com.example.starwarsplanetapi.common.PlanetConstants.INVALID_PLANET;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -91,6 +92,25 @@ public class PlanetControllerTest {
     public void getPlanet_ByNonExistingId_ReturnsNotFound() throws Exception {
         mockMvc.perform(
             get("/planets/{id}", 1L)
+        )
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void getPlanet_ByExistingName_ReturnsPlanet() throws Exception {
+        when(planetService.findByName(anyString())).thenReturn(Optional.of(PLANET));
+
+        mockMvc.perform(
+            get("/planets/name/{name}", PLANET.getName())
+        )
+            .andExpect(status().isOk())
+            .andExpect(content().json(objectMapper.writeValueAsString(PLANET)));
+    }
+
+    @Test
+    public void getPlanet_ByNonExistingName_ReturnsNotFound() throws Exception {
+        mockMvc.perform(
+            get("/planets/name/{name}", PLANET.getName())
         )
             .andExpect(status().isNotFound());
     }

@@ -74,4 +74,23 @@ public class PlanetRepositoryTest {
 
         assertThat(foundPlanet).isNull();
     }
+
+    @Test
+    public void getPlanet_ByExistingName_ReturnsPlanet() {
+        Planet planet = testEntityManager.persistFlushFind(PLANET);
+
+        Planet foundPlanet = planetRepository.findByName(planet.getName()).orElse(null);
+
+        assertThat(foundPlanet).isNotNull();
+        assertThat(foundPlanet.getName()).isEqualTo(PLANET.getName());
+        assertThat(foundPlanet.getClimate()).isEqualTo(PLANET.getClimate());
+        assertThat(foundPlanet.getTerrain()).isEqualTo(PLANET.getTerrain());
+    }
+
+    @Test
+    public void getPlanet_ByNonExistingName_ReturnsNull() {
+        Planet foundPlanet = planetRepository.findByName("Non existing name").orElse(null);
+
+        assertThat(foundPlanet).isNull();
+    }
 }
