@@ -1,6 +1,7 @@
 package com.example.starwarsplanetapi.web;
 
 import static com.example.starwarsplanetapi.common.PlanetConstants.PLANET;
+import static com.example.starwarsplanetapi.common.PlanetConstants.PLANETS;
 import static com.example.starwarsplanetapi.common.PlanetConstants.INVALID_PLANET;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -10,6 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -113,5 +115,34 @@ public class PlanetControllerTest {
             get("/planets/name/{name}", PLANET.getName())
         )
             .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void listPlanets_ReturnsFilteredPlanets() throws Exception {
+        when(planetService.list(null, null)).thenReturn(PLANETS);
+        when(planetService.list(PLANET.getClimate(), PLANET.getTerrain())).thenReturn(List.of(PLANET));
+
+        mockMvc.perform(
+            get("/planets")
+        )
+            .andExpect(status().isOk())
+            .andExpect(content().json(objectMapper.writeValueAsString(PLANETS)));
+
+        mockMvc.perform(
+            get("/planets")
+            .param("climate", PLANET.getClimate())
+            .param("terrain", PLANET.getTerrain())
+        )
+            .andExpect(status().isOk())
+            .andExpect(content().json(objectMapper.writeValueAsString(List.of(PLANET))));
+    }
+
+    @Test
+    public void listPlanets_ReturnsNoPlanets() throws Exception {
+        mockMvc.perform(
+            get("/planets")
+        )
+            .andExpect(status().isOk())
+            .andExpect(content().json(objectMapper.writeValueAsString(List.of())));
     }
 }
