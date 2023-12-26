@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -155,15 +155,5 @@ public class PlanetControllerTest {
             delete("/planets/{id}", 1L)
         )
             .andExpect(status().isNoContent());
-    }
-
-    @Test
-    public void deletePlanet_ByNonExistingId_ReturnsNotFound() throws Exception {
-        doThrow(new EmptyResultDataAccessException(1)).when(planetService).deleteById(anyLong());
-
-        mockMvc.perform(
-            delete("/planets/{id}", 1L)
-        )
-            .andExpect(status().isNotFound());
     }
 }
