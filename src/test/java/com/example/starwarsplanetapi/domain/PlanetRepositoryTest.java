@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Example;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -139,7 +140,7 @@ public class PlanetRepositoryTest {
     }
 
     @Test
-    public void deletePlanet_ByNonExistingId_ThrowsException() {
-        assertThatThrownBy(() -> planetRepository.deleteById(1L)).isInstanceOf(EmptyResultDataAccessException.class);
+    public void deletePlanet_ByNullId_ThrowsException() {
+        assertThatThrownBy(() -> planetRepository.deleteById(null)).isInstanceOf(InvalidDataAccessApiUsageException.class);
     }
 }

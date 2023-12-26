@@ -2,6 +2,7 @@ package com.example.starwarsplanetapi.web;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -34,11 +35,11 @@ public class GenericExceptionHandler extends ResponseEntityExceptionHandler {
             .body(ex.getMessage());
     }
 
-    @ExceptionHandler(EmptyResultDataAccessException.class)
-    private ResponseEntity<Object> handleEmptyResultDataAccessException(
-        EmptyResultDataAccessException ex
+    @ExceptionHandler(InvalidDataAccessApiUsageException.class)
+    private ResponseEntity<Object> handleInvalidDataAccessApiUsageException(
+        InvalidDataAccessApiUsageException ex
     ) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(ex.getMessage());
     }
 }
