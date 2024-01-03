@@ -9,12 +9,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Example;
 import org.springframework.test.context.jdbc.Sql;
+import java.util.stream.Stream;
 
 import com.example.starwarsplanetapi.repositories.PlanetRepository;
 
@@ -44,13 +48,22 @@ public class PlanetRepositoryTest {
         assertThat(foundPlanet.getTerrain()).isEqualTo(PLANET.getTerrain());
     }
 
-    @Test
-    public void createPlanet_WithInvalidData_ThrowsException() {
-        Planet emptyPlanet = new Planet();
-        Planet invalidPlanet = new Planet("", "", "");
+    private static Stream<Arguments> providesInvalidPlanets() {
+        return Stream.of(
+            Arguments.of(new Planet(null, PLANET.getClimate(), PLANET.getTerrain())),
+            Arguments.of(new Planet(PLANET.getName(), null, PLANET.getTerrain())),
+            Arguments.of(new Planet(PLANET.getName(), PLANET.getClimate(), null)),
+            Arguments.of(new Planet(null, null, PLANET.getTerrain())),
+            Arguments.of(new Planet(null, PLANET.getClimate(), null)),
+            Arguments.of(new Planet(PLANET.getName(), null, null)),
+            Arguments.of(new Planet(null, null, null))
+        );
+    }
 
-        assertThatThrownBy(() -> planetRepository.save(emptyPlanet)).isInstanceOf(RuntimeException.class);
-        assertThatThrownBy(() -> planetRepository.save(invalidPlanet)).isInstanceOf(RuntimeException.class);
+    @ParameterizedTest
+    @MethodSource("providesInvalidPlanets")
+    public void createPlanet_WithInvalidData_ThrowsException(Planet planet) {
+        assertThatThrownBy(() -> planetRepository.save(planet)).isInstanceOf(RuntimeException.class);
     }
 
     @Test
