@@ -1,0 +1,11 @@
+spring:
+    main:
+        web-application-type: none
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+    datasource:
+        url: ${MYSQL_HOST-TEST:jdbc:mysql://localhost/starwars?useSSL=false}
+        username: ${MYSQL_USERNAME-TEST:user}
+        password: ${MYSQL_PASSWORD_ROOT:F@ke1234}
